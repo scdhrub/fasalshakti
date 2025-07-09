@@ -30,4 +30,6 @@ public partial record ApplyVendorModel : BaseNopModel
 
     public bool DisableFormInput { get; set; }
     public string Result { get; set; }
+    public IFormFile FertilizerFile { get; set; }
+    public IFormFile SeedFile { get; set; }
 }

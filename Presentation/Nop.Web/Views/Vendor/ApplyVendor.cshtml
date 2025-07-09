@@ -43,11 +43,20 @@
                             <label asp-for="Description" asp-postfix=":"></label>
                             <textarea asp-for="Description" class="description"></textarea>
                         </div>
+
+                        @await Html.PartialAsync("_VendorAttributes", Model.VendorAttributes)
                         <div class="inputs">
-                            <label>@T("Vendors.ApplyAccount.Picture"):</label>
+                            <label>@T("Vendors.ApplyAccount.fertilizer"):</label>
                             <input name="uploadedFile" type="file" accept="image/*" />
                         </div>
-                        @await Html.PartialAsync("_VendorAttributes", Model.VendorAttributes)
+                        <div class="inputs">
+                            <label>@T("Vendors.ApplyAccount.seed"):</label>
+                            <input name="FertilizerFile" type="file" accept="image/*" />
+                        </div>
+                        <div class="inputs">
+                            <label>@T("Vendors.ApplyAccount.Picture"):</label>
+                            <input name="SeedFile" type="file" accept="image/*" />
+                        </div>
                         @if (Model.DisplayCaptcha)
                         {
                             <nop-captcha />
@@ -79,7 +88,7 @@
                                             $('#read-acceptterms').on('click',
                                                 function (e) {
                                                     displayPopupContentFromUrl(
-                                                        '@Url.RouteUrl("TopicPopup", new {SystemName = "VendorTermsOfService"})',
+                                                        '@Url.RouteUrl("TopicPopup", new { SystemName = "VendorTermsOfService" })',
                                                         '@T("Vendors.ApplyAccount.AcceptTermsOfService")');
                                                 });
                                         });

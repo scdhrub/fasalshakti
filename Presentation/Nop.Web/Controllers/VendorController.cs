@@ -194,7 +194,7 @@ public partial class VendorController : BasePublicController
 
     [HttpPost, ActionName("ApplyVendor")]
     [ValidateCaptcha]
-    public virtual async Task<IActionResult> ApplyVendorSubmit(ApplyVendorModel model, bool captchaValid, IFormFile uploadedFile, IFormCollection form)
+    public virtual async Task<IActionResult> ApplyVendorSubmit(ApplyVendorModel model, bool captchaValid, IFormFile uploadedFile, IFormFile FertilizerFile, IFormFile SeedFile, IFormCollection form)
     {
         if (!_vendorSettings.AllowCustomersToApplyForVendorAccount)
             return RedirectToRoute("Homepage");
@@ -236,6 +236,39 @@ public partial class VendorController : BasePublicController
                 ModelState.AddModelError("", await _localizationService.GetResourceAsync("Vendors.ApplyAccount.Picture.ErrorMessage"));
             }
         }
+        int fertilizerFileDownloadId = 0;
+        int seedFileDownloadId = 0;
+
+        if (FertilizerFile != null)
+        {
+            var fileBinary = await _downloadService.GetDownloadBitsAsync(FertilizerFile);
+            var download = new Download
+            {
+                DownloadBinary = fileBinary,
+                ContentType = FertilizerFile.ContentType,
+                Filename = Path.GetFileName(FertilizerFile.FileName),
+                Extension = Path.GetExtension(FertilizerFile.FileName),
+                IsNew = true
+            };
+            await _downloadService.InsertDownloadAsync(download);
+            fertilizerFileDownloadId = download.Id;
+        }
+
+        if (SeedFile != null)
+        {
+            var fileBinary = await _downloadService.GetDownloadBitsAsync(SeedFile);
+            var download = new Download
+            {
+                DownloadBinary = fileBinary,
+                ContentType = SeedFile.ContentType,
+                Filename = Path.GetFileName(SeedFile.FileName),
+                Extension = Path.GetExtension(SeedFile.FileName),
+                IsNew = true
+            };
+            await _downloadService.InsertDownloadAsync(download);
+            seedFileDownloadId = download.Id;
+        }
+
 
         //vendor attributes
         var vendorAttributesXml = await ParseVendorAttributesAsync(form);
@@ -276,6 +309,10 @@ public partial class VendorController : BasePublicController
 
             //save vendor attributes
             await _genericAttributeService.SaveAttributeAsync(vendor, NopVendorDefaults.VendorAttributes, vendorAttributesXml);
+
+            //Save download IDs with vendor using Generic Attributes
+            await _genericAttributeService.SaveAttributeAsync(vendor, "FertilizerFileDownloadId", fertilizerFileDownloadId);
+            await _genericAttributeService.SaveAttributeAsync(vendor, "SeedFileDownloadId", seedFileDownloadId);
 
             //notify store owner here (email)
             await _workflowMessageService.SendNewVendorAccountApplyStoreOwnerNotificationAsync(customer,
@@ -336,6 +373,7 @@ public partial class VendorController : BasePublicController
                 ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.VendorInfo.Picture.ErrorMessage"));
             }
         }
+
 
         var prevPicture = await _pictureService.GetPictureByIdAsync(vendor.PictureId);
 

@@ -2,7 +2,16 @@
   "InstalledPluginNames": [
     "Obsolete field, using only for compatibility"
   ],
-  "InstalledPlugins": [],
+  "InstalledPlugins": [
+    {
+      "SystemName": "Payments.AmazonPay",
+      "Version": "4.80.8"
+    },
+    {
+      "SystemName": "Widgets.Swiper",
+      "Version": "4.80.1"
+    }
+  ],
   "PluginNamesToUninstall": [],
   "PluginNamesToDelete": [],
   "PluginNamesToInstall": []
