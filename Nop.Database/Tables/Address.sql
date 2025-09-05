@@ -1,4 +1,4 @@
-USE [db21390]
+
 GO
 
 /****** Object:  Table [dbo].[Address]    Script Date: 05-09-2025 22:54:41 ******/
